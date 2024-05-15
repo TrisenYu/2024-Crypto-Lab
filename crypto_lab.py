@@ -138,7 +138,7 @@ class stream_pass:
 		TODO: （应用架构级）
 			-  升级为去中心化 P2P 通信。
 			-       断点重传或者请求续传。
-			- 通过通信双方已有的信息或者使用可信第三方仲裁以克服中间人攻击的可能
+			- 通过通信双方已有的信息或用连锁协议、或使用可信第三方仲裁以降低中间人攻击的可能
 	"""
 
 	def __init__(self,
@@ -148,10 +148,10 @@ class stream_pass:
 	             out_path: str = './tmp-file',
 	             sport: int = 3751,
 	             rport: int = 3750):
-		self.role = role  # `sender` or `receiver`
+		self.role = role            # `sender` or `receiver`
 		self.pub, self.pri = get_rsa_pem_key()  # 对象固有的，用于验证身份的公私钥对
-		self.use_enc_file = b''  # 加密文件用字节串
-		self.use_enc_flow = ''  # iso-8859-1 等价转换
+		self.use_enc_file = b''     # 加密文件用字节串
+		self.use_enc_flow = ''      # iso-8859-1 等价转换
 
 		self.name = gethostname()
 		self.birth = get_curr_time()
@@ -162,8 +162,8 @@ class stream_pass:
 		self.bsignature = ''
 		self.bpub: Optional[bytes] = None  # 通信获取的发送方公钥。如非接收方，则此处为空。
 
-		self.session_key = b''  # 会话协商密钥
-		self.session_str = ''  # iso-8859-1 等价转换。
+		self.session_key = b''      # 会话协商密钥
+		self.session_str = ''       # iso-8859-1 等价转换。
 
 		self.out_path = out_path
 		self.dec_path = ''
@@ -172,9 +172,9 @@ class stream_pass:
 			os.remove(out_path)
 		self.out_fd = open(out_path, 'ab')  # 附加二进制形式写入。
 		self.file_path = file_path if self.role == 'sender' else ''
-		self.file_name = ''  # 接收文件名
+		self.file_name = '' # 接收文件名
 		self.file_size = 0  # 文件尺寸
-		self.file_hash = ''  # 未加密哈希
+		self.file_hash = '' # 未加密哈希
 
 		self.__init_send__ = False  # 首次发送标记
 		self.__init_recv__ = False  # 首次接收标记
@@ -259,7 +259,7 @@ class stream_pass:
 
 	# 从此处起实现安全通信协议。
 	def exchange_key_challenge(self, dst, rport, state):
-		if state == 0:  # key-challenge
+		if state == 0:
 			self.just_send(dst, rport, self.pub.exportKey())
 			self.just_send(dst, rport, self.signature.encode('iso-8859-1'))
 		elif state == 1:
